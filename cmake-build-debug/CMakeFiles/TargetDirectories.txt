@@ -1,0 +1,3 @@
+/mnt/c/Users/shiri/OneDrive/שולחן העבודה/technion/semester 6/Compilation/HW1/cmake-build-debug/CMakeFiles/HW1.dir
+/mnt/c/Users/shiri/OneDrive/שולחן העבודה/technion/semester 6/Compilation/HW1/cmake-build-debug/CMakeFiles/edit_cache.dir
+/mnt/c/Users/shiri/OneDrive/שולחן העבודה/technion/semester 6/Compilation/HW1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
