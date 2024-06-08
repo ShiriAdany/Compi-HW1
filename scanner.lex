@@ -3,6 +3,7 @@
     #include <stdio.h>
     #include <stddef.h>
     #include <stdint.h>
+    #include <string.h>
     #include "tokens.hpp"
     void showToken(char *);
     void append_char(char *dest, char c);
@@ -28,7 +29,7 @@ else                showToken("ELSE");
 while               showToken("WHILE");
 break               showToken("BREAK");
 continue            showToken("CONTINUE");
-\n
+[\n\r\t ]
 ;                   showToken("SC");
 \(                  showToken("LPAREN");
 \)                  showToken("RPAREN");
@@ -40,8 +41,7 @@ continue            showToken("CONTINUE");
 \/\/[^\n\r]*        showToken("COMMENT");
 [A-Za-z][A-Za-z0-9]* showToken("ID");
 [1-9][0-9]*|0       showToken("NUM");
-".*"                showToken("STRING");
-".*[\n\r]           showToken("STRING_ERROR");
+\".*?\"                showToken("STRING");
 .                   showToken("UNKNOWN");
 
 %%
@@ -57,7 +57,7 @@ void showToken(char * name) {
     if(name=="COMMENT"){
         printf("%d ", yylineno);
         printf("%s ", name);
-        printf("//");
+        printf("//\n");
     }
     else if(name=="UNKNOWN"){
         printf("Error %s\n", yytext);
@@ -67,35 +67,74 @@ void showToken(char * name) {
         printf("Error unclosed string\n");
     }
     else if(name=="STRING"){
-        char* to_print="";
-        bool prev_is_backslash = False;
-        for (int i=1; i < yytext.length - 1; i++) {
+        char to_print[1024];
+        int index =0;
+        bool prev_is_backslash = false;
+        int length = strlen(yytext);
+
+        for (int i=1; i < length - 1; i++) {
             if (prev_is_backslash) {
-                if (yytext[i] == '\' || yytext[i] == '"') {
-                    append_char(to_print, yytext[i]);
+                prev_is_backslash = false;
+                if (yytext[i] == 92 || yytext[i] == 34) {
+                    to_print[index] = yytext[i];
+                    index++;
                 } else if (yytext[i] == 'n') {
-                    append_char(to_print, 10);
-                }
+                    to_print[index] = 10;
+                    index++;
+
                 } else if (yytext[i] == 'r') {
-                    append_char(to_print, 13);
+                    to_print[index] = 13;
+                    index++;
+
                 } else if (yytext[i] == 't') {
-                    append_char(to_print, 9);
+                    to_print[index] = 9;
+                    index++;
+
                 } else if (yytext[i] == '0') {
-                    append_char(to_print, 0);
+                    to_print[index] = 0;
+                    index++;
+
                 } else if (yytext[i] == 'x') {
                     // handle digits for the \x case
-                } else {
+                    if(i+2>=length - 1) printf("Error undefined escape sequence %c\n", yytext[i]);
+                    else{
+                        char first_dig = yytext[i+1];
+                        char sec_dig = yytext[i+2];
+                        i+=2;
+                        if(first_dig >= '0' &&first_dig <= '7' && ((sec_dig >= '0' && sec_dig <= '9') || (sec_dig >= 'a' && sec_dig <= 'f') || (sec_dig >= 'A' && sec_dig <= 'F')))
+                        {
+                            int first = (first_dig -'0')*16;
+                            int second;
+                            if(sec_dig >= '0' && sec_dig <= '9') second = sec_dig -'0';
+                            else if (sec_dig >= 'a' && sec_dig <= 'f') second = sec_dig - 'a' +10;
+                            else if (sec_dig >= 'A' && sec_dig <= 'F') second = sec_dig - 'A' +10;
+                            to_print[index] = first+second;
+                            index++;
+
+
+                        }
+                    }
+                }
+
+                 else {
                     printf("Error undefined escape sequence %c\n", yytext[i]);
                 }
             }
-            if (yytext[i] == '\') {
-                prev_is_backslash = True;
-            } else {
-                prev_is_backslash = False;
+            else{
+                if (yytext[i] == 92) {
+                    prev_is_backslash = true;
+                } else {
+                    prev_is_backslash = false;
+                    to_print[index] = yytext[i];
+                    index++;
+                }
             }
         }
+        printf("%d ", yylineno);
+        printf("%s ", name);
 
-
+        to_print[index]= 0;
+        printf("%s\n", to_print);
     }
     else{
         printf("%d ", yylineno);
