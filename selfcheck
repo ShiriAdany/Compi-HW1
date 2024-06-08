@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 
 # change these per each homework
 #	link to tests:
@@ -91,6 +91,7 @@ while [ $i -le $numtests ]
 		fi
 		i=$[$i+1]
 done
+
 
 cd .. &> /dev/null
 rm -rf "$tmpdir"
