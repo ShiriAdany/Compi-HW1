@@ -1,0 +1,15 @@
+2,6c2,9
+< 1 ID No
+< 1 ID newlines
+< 1 ID in
+< 1 ID strings
+< Error !
+---
+> 3 INT int
+> 3 ID main
+> 3 LPAREN (
+> 3 RPAREN )
+> 3 LBRACE {
+> 4 ID print
+> 4 LPAREN (
+> Error unclosed string

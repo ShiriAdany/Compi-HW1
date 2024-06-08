@@ -1,0 +1,20 @@
+67,68c67
+< 11 ASSIGN =
+< 11 ASSIGN =
+---
+> 11 RELOP ==
+74,75c73
+< 12 RELOP !
+< 12 ASSIGN =
+---
+> 12 RELOP !=
+93,94c91
+< 15 RELOP <
+< 15 ASSIGN =
+---
+> 15 RELOP <=
+100,101c97
+< 16 RELOP >
+< 16 ASSIGN =
+---
+> 16 RELOP >=
